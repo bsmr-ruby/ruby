@@ -1,3 +1,44 @@
+Sun Mar  9 14:14:49 2014  Eric Wong  <e@80x24.org>
+
+	* class.c (rb_class_subclass_add): use xmalloc
+	* class.c (rb_module_add_to_subclasses_list): ditto
+	* class.c (rb_class_remove_from_super_subclasses): use xfree
+	* class.c (rb_class_remove_from_module_subclasses): ditto
+	  [Bug #9616]
+
+Sun Mar  9 13:51:16 2014  Nobuyoshi Nakada  <nobu@ruby-lang.org>
+
+	* ext/fiddle/function.c (function_call): fix memory leak when an
+	  exception occurs at argument conversion or the function call.
+
+Sun Mar  9 06:42:40 2014  Eric Wong  <e@80x24.org>
+
+	* variable.c (struct global_variable): shrink by 8 bytes on 64-bit
+
+Sat Mar  8 17:42:51 2014  Eric Wong  <e@80x24.org>
+
+	* vm.c (add_opt_method): cleanup to use rb_method_entry_at
+
+Sat Mar  8 13:46:40 2014  Nobuyoshi Nakada  <nobu@ruby-lang.org>
+
+	* ext/dl/cptr.c (dlptr_free), ext/dl/handle.c (dlhandle_free),
+	  ext/fiddle/handle.c (fiddle_handle_free),
+	  ext/fiddle/pointer.c (fiddle_ptr_free): fix memory leak.
+	  based on the patch Heesob Park at [ruby-dev:48021] [Bug #9599].
+
+Sat Mar  8 13:30:39 2014  Nobuyoshi Nakada  <nobu@ruby-lang.org>
+
+	* process.c (obj2uid, obj2gid): now getpwnam_r() and getgrnam_r()
+	  may need larger buffers than sysconf values, so retry with
+	  expanding the buffer when ERANGE is returned.
+	  [ruby-core:61325] [Bug #9600]
+
+Sat Mar  8 07:35:40 2014  Nobuyoshi Nakada  <nobu@ruby-lang.org>
+
+	* enum.c (find_i): yield multiple values instead of a packed
+	  array, so that lambda block can work.  with tests by Alex
+	  Rothenberg.  [ruby-core:61340] [Bug #9605]
+
 Fri Mar  7 19:29:13 2014  Eric Wong  <e@80x24.org>
 
 	* vm_eval.c (vm_call0_body): use RARRAY_CONST_PTR
