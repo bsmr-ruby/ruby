@@ -1,3 +1,23 @@
+Tue Mar 11 10:55:10 2014  Nobuyoshi Nakada  <nobu@ruby-lang.org>
+
+	* README.EXT{,.ja} (Appendix B): update contents of `ruby_options`
+	  and replace `ruby_run` with `ruby_run_node`.  based on the patch
+	  by Kaneko Yuichiro at [ruby-dev:48030] [Bug #9619].
+
+Tue Mar 11 06:54:00 2014  Scott Francis  <scott.francis@shopify.com>
+
+	* ext/objspace/objspace_dump.c: Check fptr before trying to dump RFILE
+	  object fd. [GH-562]
+
+	* test/objspace/test_objspace.rb: add test
+
+Tue Mar 11 02:04:36 2014  NARUSE, Yui  <naruse@ruby-lang.org>
+
+	* vm_dump.c (rb_vm_bugreport): show vm maps on FreeBSD.
+
+	* vm_dump.c (procstat_vm): copied from FreeBSD.
+	  http://svnweb.freebsd.org/base/head/usr.bin/procstat/procstat_vm.c?revision=261780
+
 Mon Mar 10 12:14:26 2014  NARUSE, Yui  <naruse@ruby-lang.org>
 
 	* configure.in: always check dladdr(1).

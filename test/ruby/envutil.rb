@@ -390,7 +390,7 @@ eom
         assert_warning(*args) {$VERBOSE = false; yield}
       end
 
-      def assert_no_memory_leak(args, prepare, code, message=nil, limit: 1.5, **opt)
+      def assert_no_memory_leak(args, prepare, code, message=nil, limit: 1.5, rss: false, **opt)
         require_relative 'memory_status'
         token = "\e[7;1m#{$$.to_s}:#{Time.now.strftime('%s.%L')}:#{rand(0x10000).to_s(16)}:\e[m"
         token_dump = token.dump
@@ -406,7 +406,8 @@ eom
         cmd = [
           'END {STDERR.puts '"#{token_dump}"'"FINAL=#{Memory::Status.new}"}',
           prepare,
-          'STDERR.puts('"#{token_dump}"'"START=#{$initial_size = Memory::Status.new}")',
+          'STDERR.puts('"#{token_dump}"'"START=#{$initial_status = Memory::Status.new}")',
+          '$initial_size = $initial_status.size',
           code,
           'GC.start',
         ].join("\n")
@@ -414,7 +415,7 @@ eom
         before = err.sub!(/^#{token_re}START=(\{.*\})\n/, '') && Memory::Status.parse($1)
         after = err.sub!(/^#{token_re}FINAL=(\{.*\})\n/, '') && Memory::Status.parse($1)
         assert_equal([true, ""], [status.success?, err], message)
-        ([:size, :rss] & after.members).each do |n|
+        ([:size, (rss && :rss)] & after.members).each do |n|
           b = before[n]
           a = after[n]
           next unless a > 0 and b > 0
