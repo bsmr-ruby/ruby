@@ -1,3 +1,83 @@
+Sat Mar 15 11:02:58 2014  Nobuyoshi Nakada  <nobu@ruby-lang.org>
+
+	* configure.in (DLDFLAGS): check for each options to control
+	  symbol resolution.  [ruby-core:61429] [Bug #9624]
+
+Sat Mar 15 07:02:35 2014  Eric Wong  <e@80x24.org>
+
+	* st.c (st_update): remove unnecessary assignment
+
+Fri Mar 14 14:58:38 2014  NARUSE, Yui  <naruse@ruby-lang.org>
+
+	* addr2line.c (fill_lines): fetch symbol names from ELF binary's
+	  symbol table if it is built with cc -g and not stripped.
+	  Now ruby can show static symbols on Linux though glibc's
+	  backtrace_symbols(3) don't show them.
+
+	* addr2line.c (rb_dump_backtrace_with_lines): use dladdr(3) to
+	  detect what object file declares the symbol because
+	  dl_iterate_phdr can't detect the main executable file
+	  and codes on the stack.
+	  NOTE: signal trampolines sometimes on the user stack. (FreeBSD)
+
+	* addr2line.c (rb_dump_backtrace_with_lines): stop showing
+	  backtrace if the function's name is main.
+	  NOTE: FreeBSD's backtrace (libexecinfo) shows _start and
+	  an additional address. Why it doesn't remove them on dladdr phase
+	  is, dladdr may fail to detect the main function but detect
+	  as _start function. Therefore it must be after scanning
+	  the symbol table and getting correct name.
+
+
+Fri Mar 14 12:07:46 2014  Zachary Scott  <e@zzak.io>
+
+	* doc/syntax/literals.rdoc: [DOC] Single quote strings allows escape
+	  of backslash as well, patch by @idupree [Fixes GH-553]
+	  https://github.com/ruby/ruby/pull/553
+
+Fri Mar 14 01:18:24 2014  Nobuyoshi Nakada  <nobu@ruby-lang.org>
+
+	* vm.c (invoke_block_from_c): add splattable argument.
+
+	* vm.c (vm_invoke_proc): disallow to splat when directly invoked.
+
+	* vm_insnhelper.c (vm_callee_setup_arg_complex, vm_callee_setup_arg):
+	  relax arity check of yielded lambda.  [ruby-core:61340] [Bug #9605]
+
+	* test/ruby/test_yield.rb (TestRubyYieldGen#emu_bind_params): no
+	  longer raise ArgumentError when splatting to lambda.
+
+Thu Mar 13 23:51:02 2014  NAKAMURA Usaku  <usa@ruby-lang.org>
+
+	* ext/-test-/win32/dln/libdlntest.c (dlntest_ordinal): no need to
+	  specify export in the source file because .def file do it.
+	  get rid of warning on linking.
+
+Wed Mar 12 11:19:03 2014  Nobuyoshi Nakada  <nobu@ruby-lang.org>
+
+	* vm_insnhelper.c (vm_callee_setup_arg): disable fastpath if splat
+	  argument, since argc may differ for each calls.
+	  [ruby-core:61422] [Bug #9622]
+
+	* vm_insnhelper.c (vm_callee_setup_arg): turn a macro into an
+	  inline function.
+
+Wed Mar 12 07:26:05 2014  Eric Wong  <e@80x24.org>
+
+	* insns.def (opt_regexpmatch2): respect redefined match op
+	  Thanks to Sam Rawlins for the fix.
+	* test/ruby/test_string.rb: test based on Tsuyoshi Sawada's report
+	  [Bug #9581]
+
+Tue Mar 11 22:31:25 2014  Kazuki Tsujimoto  <kazuki@callcc.net>
+
+	* ext/.document: add objspace/objspace_dump.c to document file.
+
+Tue Mar 11 22:22:38 2014  Kazuki Tsujimoto  <kazuki@callcc.net>
+
+	* test/objspace/test_objspace.rb (TestObjSpace#test_dump_uninitialized_file):
+	  remove dependency on json library.
+
 Tue Mar 11 10:55:10 2014  Nobuyoshi Nakada  <nobu@ruby-lang.org>
 
 	* README.EXT{,.ja} (Appendix B): update contents of `ruby_options`
@@ -68,12 +148,6 @@ Sat Mar  8 13:30:39 2014  Nobuyoshi Nakada  <nobu@ruby-lang.org>
 	  may need larger buffers than sysconf values, so retry with
 	  expanding the buffer when ERANGE is returned.
 	  [ruby-core:61325] [Bug #9600]
-
-Sat Mar  8 07:35:40 2014  Nobuyoshi Nakada  <nobu@ruby-lang.org>
-
-	* enum.c (find_i): yield multiple values instead of a packed
-	  array, so that lambda block can work.  with tests by Alex
-	  Rothenberg.  [ruby-core:61340] [Bug #9605]
 
 Fri Mar  7 19:29:13 2014  Eric Wong  <e@80x24.org>
 
